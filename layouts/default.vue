@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app>
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
@@ -7,112 +7,99 @@
       fixed
       app
     >
-      <v-list>
-        <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
-          router
-          exact
-        >
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+      <nuxt-link to="/">
+        <img src="/logo.png" alt="DataGuard" class="logo" />
+      </nuxt-link>
+      <Navigation />
+      <template v-slot:append>
+        <div class="pa-5 d-flex align-center">
+          <span>All plugins {{ DisableAll ? "disabled" : "enabled" }}</span>
+          <v-switch
+            v-model="DisableAll"
+            :success="!DisableAll"
+            :error="DisableAll"
+            inset
+            hide-details
+            class="mt-0 ml-auto"
+          ></v-switch>
+        </div>
+      </template>
     </v-navigation-drawer>
-    <v-app-bar
-      :clipped-left="clipped"
-      fixed
-      app
-    >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn
-        icon
-        @click.stop="miniVariant = !miniVariant"
-      >
-        <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="clipped = !clipped"
-      >
-        <v-icon>mdi-application</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="fixed = !fixed"
-      >
-        <v-icon>mdi-minus</v-icon>
-      </v-btn>
-      <v-toolbar-title v-text="title" />
-      <v-spacer />
-      <v-btn
-        icon
-        @click.stop="rightDrawer = !rightDrawer"
-      >
-        <v-icon>mdi-menu</v-icon>
-      </v-btn>
-    </v-app-bar>
     <v-main>
       <v-container>
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <Nuxt />
       </v-container>
     </v-main>
-    <v-navigation-drawer
-      v-model="rightDrawer"
-      :right="right"
-      temporary
-      fixed
-    >
-      <v-list>
-        <v-list-item @click.native="right = !right">
-          <v-list-item-action>
-            <v-icon light>
-              mdi-repeat
-            </v-icon>
-          </v-list-item-action>
-          <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-    <v-footer
-      :absolute="!fixed"
-      app
-    >
-      <span>&copy; {{ new Date().getFullYear() }}</span>
-    </v-footer>
   </v-app>
 </template>
 
 <script>
 export default {
-  name: 'DefaultLayout',
-  data () {
+  name: "DefaultLayout",
+
+  data() {
     return {
       clipped: false,
-      drawer: false,
+      drawer: true,
       fixed: false,
       items: [
         {
-          icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/'
+          icon: "mdi-apps",
+          title: "Marketing",
+          to: "/tab1",
         },
         {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
-        }
+          icon: "mdi-chart-bubble",
+          title: "Finance",
+          to: "/tab2",
+        },
+        {
+          icon: "mdi-chart-bubble",
+          title: "Personnel",
+          to: "/tab3",
+        },
       ],
       miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Vuetify.js'
-    }
-  }
-}
+      title: "DataGuard",
+    };
+  },
+  mounted() {
+    this.$store.dispatch("init");
+    // this.$store.dispatch("fetchPlugins");
+  },
+  computed: {
+    DisableAll: {
+      get() {
+        return this.$store.state.DisableAll;
+      },
+      set() {
+        this.$store.dispatch("disableAllStatus", !this.$store.state.DisableAll);
+      },
+    },
+  },
+};
 </script>
+<style scoped>
+.logo {
+  width: 100%;
+}
+</style>
+<style>
+.v-navigation-drawer__content {
+  background-color: #f1f1f1;
+}
+.tabs .v-list-item--active {
+  background-color: #fff;
+  border-left: 4px solid #c63040;
+}
+.tabs .v-list-item--active::before {
+  opacity: 0;
+}
+.tabs .v-list-item--active .v-list-item__content {
+  margin-left: -3px;
+}
+.v-navigation-drawer__append {
+  background-color: #f1f1f1;
+}
+</style>
