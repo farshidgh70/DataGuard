@@ -25,7 +25,9 @@
                 :error="plugin.inactive"
                 @change="ChangeStatus(plugin)"
               ></v-switch>
-              <span class="label">Allowed</span>
+              <span class="label">{{
+                plugin.value ? "Allowed" : "Blocked"
+              }}</span>
             </div>
           </v-card-title>
           <v-card-text>
